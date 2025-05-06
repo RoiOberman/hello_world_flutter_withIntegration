@@ -11,15 +11,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Set up Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.19.6'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.3'
 
-    - name: Install dependencies
-      run: flutter pub get
+      - name: Install dependencies
+        run: flutter pub get
 
-    - name: Run integration tests
-      run: flutter drive -d chrome --driver=test_driver/app_test.dart --target=integration_test/app_test.dart
+      - name: Run integration test
+        run: flutter drive -d chrome --driver=test_driver/app_test.dart --target=integration_test/app_test.dart
