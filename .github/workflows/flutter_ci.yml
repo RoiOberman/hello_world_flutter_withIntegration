@@ -2,24 +2,38 @@ name: Flutter CI
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - uses: subosito/flutter-action@v2
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.29.3'
 
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Run integration test
-        run: flutter drive -d web-server --driver=test_driver/app_test.dart --target=integration_test/app_test.dart
+      - name: Enable web
+        run: flutter config --enable-web
 
+      - name: Run integration test on Web using WebDriver
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-chromedriver
+          export PATH="$PATH:/usr/lib/chromium-browser/"
+          chromedriver --port=4444 &
+          flutter drive \
+            -d web-server \
+            --driver=test_driver/app_test.dart \
+            --target=integration_test/app_test.dart
